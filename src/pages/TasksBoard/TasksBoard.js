@@ -83,20 +83,6 @@ const TasksBoard = () => {
   const [done, setDone] = useState(
     tasks.filter((task) => task.status === "done")
   );
-  const [enabled, setEnabled] = React.useState(false);
-
-  // React.useEffect(() => {
-  //   const animation = requestAnimationFrame(() => setEnabled(true));
-
-  //   return () => {
-  //     cancelAnimationFrame(animation);
-  //     setEnabled(false);
-  //   };
-  // }, []);
-
-  // if (!enabled) {
-  //   return null;
-  // }
 
   const AddNewCard = (e, status) => {
     e.preventDefault();
@@ -155,6 +141,7 @@ const TasksBoard = () => {
     console.log(tasks);
   };
 
+  //to handle the drag and drop
   const onDragEnd = (result) => {
     if (!result.destination) return;
     const { source, destination } = result;
@@ -250,11 +237,12 @@ const TasksBoard = () => {
 
   return (
     <div className="tasks">
+      {/* /Wrapper for the drag and drop */}
       <DragDropContext
         onDragEnd={(result) => onDragEnd(result, tasks, setTasks)}
       >
         <div className="stages Resources">
-          <h3>RESOURCES</h3>
+          <h3>Resources</h3>
           <Droppable droppableId="resources" type="PERSON">
             {(provided, snapshot) => (
               <>
@@ -306,7 +294,7 @@ const TasksBoard = () => {
         </div>
 
         <div className="stages To-Do">
-          <h3>TO-DO</h3>
+          <h3>To Do</h3>
           <Droppable droppableId="todo" type="PERSON">
             {(provided, snapshot) => (
               <>

@@ -26,6 +26,7 @@
   background-color: pink;
   margin-bottom: 10px;
   padding-top: 10px;
+  overflow-y: scroll;
 }
 
 .input {
