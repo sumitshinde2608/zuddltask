@@ -1,49 +1,30 @@
-const data = [
-  {
-    id: 1,
-    status: "open",
-    title: "Available Topic",
-    content: "Buiding a REST API with Django",
-  },
-  {
-    id: 2,
-    status: "open",
-    title: "Sponsored Post",
-    content: "How to create a React Chat Application",
-  },
-  {
-    id: 3,
-    status: "open",
-    title: "Editing",
-    content: "Building a Trello clone with React DnD",
-  },
-  {
-    id: 4,
-    status: "open",
-    title: "Invoicing",
-    content: "Inro To Web3 ",
-  },
+import { v4 as uuidv4 } from "uuid";
+
+const itemsFromBackend = [
+  { id: uuidv4(), content: "First task" },
+  { id: uuidv4(), content: "Second task" },
+  { id: uuidv4(), content: "Third task" },
+  { id: uuidv4(), content: "Fourth task" },
+  { id: uuidv4(), content: "Fifth task" },
 ];
-const statuses = [
-  {
-    index: 1,
-    status: "open",
-    color: "#EB5A46",
+
+const columnsFromBackend = {
+  [uuidv4()]: {
+    name: "Requested",
+    items: itemsFromBackend,
   },
-  {
-    index: 2,
-    status: "in progress",
-    color: "#00C2E0",
+  [uuidv4()]: {
+    name: "To do",
+    items: [],
   },
-  {
-    index: 3,
-    status: "in review",
-    color: "#C377E0",
+  [uuidv4()]: {
+    name: "In Progress",
+    items: [],
   },
-  {
-    index: 4,
-    status: "done",
-    color: "#3981DE",
+  [uuidv4()]: {
+    name: "Done",
+    items: [],
   },
-];
-export { data, statuses };
+};
+
+export { itemsFromBackend, columnsFromBackend };

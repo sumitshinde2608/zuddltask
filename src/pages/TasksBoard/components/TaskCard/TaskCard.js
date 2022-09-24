@@ -1,8 +1,12 @@
 import React from "react";
 import "./TaskCard.css";
 
-const TaskCard = () => {
-  return <div className="card">TaskCard</div>;
+const TaskCard = ({ title, description }) => {
+  return (
+    <div className="card">
+      <h4>{description}</h4>
+    </div>
+  );
 };
 
 export default TaskCard;
