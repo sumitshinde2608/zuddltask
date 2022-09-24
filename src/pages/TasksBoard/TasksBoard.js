@@ -4,40 +4,73 @@ import "./TasksBoard.css";
 
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
-const tasks = [
-  {
-    id: 1,
-    description: "Description 1",
-    status: "resources",
-    dragId: "1",
-  },
-  {
-    id: 2,
-    description: "Description 2",
-    status: "todo",
-    dragId: "2",
-  },
-  {
-    id: 3,
-    description: "Description 3",
-    status: "inprogress",
-    dragId: "3",
-  },
-  {
-    id: 4,
-    description: "Description 4",
-    status: "done",
-    dragId: "4",
-  },
-  {
-    id: 5,
-    description: "Description 5",
-    status: "done",
-    dragId: "5",
-  },
-];
+// const tasks = [
+//   {
+//     id: 1,
+//     description: "Description 1",
+//     status: "resources",
+//     dragId: "1",
+//   },
+//   {
+//     id: 2,
+//     description: "Description 2",
+//     status: "todo",
+//     dragId: "2",
+//   },
+//   {
+//     id: 3,
+//     description: "Description 3",
+//     status: "inprogress",
+//     dragId: "3",
+//   },
+//   {
+//     id: 4,
+//     description: "Description 4",
+//     status: "done",
+//     dragId: "4",
+//   },
+//   {
+//     id: 5,
+//     description: "Description 5",
+//     status: "done",
+//     dragId: "5",
+//   },
+// ];
 
 const TasksBoard = () => {
+  const [tasks, setTasks] = useState([
+    {
+      id: 1,
+      description: "Description 1",
+      status: "resources",
+      dragId: "1",
+    },
+    {
+      id: 2,
+      description: "Description 2",
+      status: "todo",
+      dragId: "2",
+    },
+    {
+      id: 3,
+      description: "Description 3",
+      status: "inprogress",
+      dragId: "3",
+    },
+    {
+      id: 4,
+      description: "Description 4",
+      status: "done",
+      dragId: "4",
+    },
+    {
+      id: 5,
+      description: "Description 5",
+      status: "done",
+      dragId: "5",
+    },
+  ]);
+
   const [resources, setResources] = useState(
     tasks.filter((task) => task.status === "resources")
   );
@@ -122,16 +155,107 @@ const TasksBoard = () => {
     console.log(tasks);
   };
 
-  // const onDragEnd = (result, tasks) => {
+  const onDragEnd = (result) => {
+    if (!result.destination) return;
+    const { source, destination } = result;
+    console.log("result", result);
 
-  // }
+    if (source.droppableId !== destination.droppableId) {
+      const sourceItems = Array.from(
+        source.droppableId === "resources"
+          ? resources
+          : source.droppableId === "todo"
+          ? todo
+          : source.droppableId === "inprogress"
+          ? inprogress
+          : done
+      );
+      const destItems = Array.from(
+        destination.droppableId === "resources"
+          ? resources
+          : destination.droppableId === "todo"
+          ? todo
+          : destination.droppableId === "inprogress"
+          ? inprogress
+          : done
+      );
+      const [removed] = sourceItems.splice(source.index, 1);
+      destItems.splice(destination.index, 0, removed);
+      console.log("sourceItems", sourceItems);
+      console.log("destItems", destItems);
+      if (source.droppableId === "resources") {
+        setResources(sourceItems);
+        if (destination.droppableId === "todo") {
+          setTodo(destItems);
+        } else if (destination.droppableId === "inprogress") {
+          setInProgress(destItems);
+        } else if (destination.droppableId === "done") {
+          setDone(destItems);
+        }
+      } else if (source.droppableId === "todo") {
+        setTodo(sourceItems);
+        if (destination.droppableId === "resources") {
+          setResources(destItems);
+        } else if (destination.droppableId === "inprogress") {
+          setInProgress(destItems);
+        } else if (destination.droppableId === "done") {
+          setDone(destItems);
+        }
+      } else if (source.droppableId === "inprogress") {
+        setInProgress(sourceItems);
+        if (destination.droppableId === "done") {
+          setDone(destItems);
+        } else if (destination.droppableId === "resources") {
+          setResources(destItems);
+        } else if (destination.droppableId === "todo") {
+          setTodo(destItems);
+        }
+        console.log("inprogress", inprogress);
+        console.log("sourceItems", sourceItems);
+      } else if (source.droppableId === "done") {
+        setDone(sourceItems);
+        if (destination.droppableId === "resources") {
+          setResources(destItems);
+        }
+        if (destination.droppableId === "todo") {
+          setTodo(destItems);
+        }
+        if (destination.droppableId === "inprogress") {
+          setInProgress(destItems);
+        }
+      }
+    } else {
+      const items = Array.from(
+        source.droppableId === "resources"
+          ? resources
+          : source.droppableId === "todo"
+          ? todo
+          : source.droppableId === "inprogress"
+          ? inprogress
+          : done
+      );
+      const [reorderedItem] = items.splice(source.index, 1);
+      items.splice(destination.index, 0, reorderedItem);
+      if (source.droppableId === "resources") {
+        setResources(items);
+      } else if (source.droppableId === "todo") {
+        setTodo(items);
+      } else if (source.droppableId === "inprogress") {
+        setInProgress(items);
+      } else if (source.droppableId === "done") {
+        setDone(items);
+      }
+    }
+  };
 
   return (
     <div className="tasks">
-      <DragDropContext onDragEnd={(result) => console.log("nafees", result)}>
+      <DragDropContext
+        onDragEnd={(result) => onDragEnd(result, tasks, setTasks)}
+      >
         <div className="stages Resources">
           <h3>RESOURCES</h3>
-          <Droppable droppableId="droppable-1" type="PERSON">
+          <Droppable droppableId="resources" type="PERSON">
             {(provided, snapshot) => (
               <>
                 <div
@@ -189,7 +313,7 @@ const TasksBoard = () => {
 
         <div className="stages To-Do">
           <h3>TO-DO</h3>
-          <Droppable droppableId="droppable-2" type="PERSON">
+          <Droppable droppableId="todo" type="PERSON">
             {(provided, snapshot) => (
               <>
                 <div
@@ -241,7 +365,7 @@ const TasksBoard = () => {
 
         <div className="stages In-Progress">
           <h3>In Progress</h3>
-          <Droppable droppableId="droppable-3" type="PERSON">
+          <Droppable droppableId="inprogress" type="PERSON">
             {(provided, snapshot) => (
               <>
                 <div
@@ -294,7 +418,7 @@ const TasksBoard = () => {
         <div className="stages Done">
           <h3> Done </h3>
 
-          <Droppable droppableId="droppable-4" type="PERSON">
+          <Droppable droppableId="done" type="PERSON">
             {(provided, snapshot) => (
               <>
                 <div
