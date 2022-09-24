@@ -1,37 +1,349 @@
-import React from "react";
+import React, { useState } from "react";
 import TaskCard from "./components/TaskCard/TaskCard";
 import "./TasksBoard.css";
+
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+
+const tasks = [
+  {
+    id: 1,
+    description: "Description 1",
+    status: "resources",
+    dragId: "1",
+  },
+  {
+    id: 2,
+    description: "Description 2",
+    status: "todo",
+    dragId: "2",
+  },
+  {
+    id: 3,
+    description: "Description 3",
+    status: "inprogress",
+    dragId: "3",
+  },
+  {
+    id: 4,
+    description: "Description 4",
+    status: "done",
+    dragId: "4",
+  },
+  {
+    id: 5,
+    description: "Description 5",
+    status: "done",
+    dragId: "5",
+  },
+];
+
 const TasksBoard = () => {
+  const [resources, setResources] = useState(
+    tasks.filter((task) => task.status === "resources")
+  );
+  const [todo, setTodo] = useState(
+    tasks.filter((task) => task.status === "todo")
+  );
+  const [inprogress, setInProgress] = useState(
+    tasks.filter((task) => task.status === "inprogress")
+  );
+  const [done, setDone] = useState(
+    tasks.filter((task) => task.status === "done")
+  );
+  const [enabled, setEnabled] = React.useState(false);
+
+  // React.useEffect(() => {
+  //   const animation = requestAnimationFrame(() => setEnabled(true));
+
+  //   return () => {
+  //     cancelAnimationFrame(animation);
+  //     setEnabled(false);
+  //   };
+  // }, []);
+
+  // if (!enabled) {
+  //   return null;
+  // }
+
+  const AddNewCard = (e, status) => {
+    e.preventDefault();
+    console.log("Add new task");
+    console.log(todo);
+    if (status === "resources") {
+      setResources((tasks) => {
+        console.log("in resources", tasks);
+        return [
+          ...tasks,
+          {
+            id: tasks.length + 1,
+            description: e.target.value,
+            status: status,
+            dragId: toString(tasks.length() + 1),
+          },
+        ];
+      });
+    } else if (status === "todo") {
+      setTodo((tasks) => {
+        return [
+          ...tasks,
+          {
+            id: tasks.length + 1,
+            description: e.target.value,
+            status: status,
+            dragId: toString(tasks.length + 1),
+          },
+        ];
+      });
+    } else if (status === "inprogress") {
+      setInProgress((tasks) => {
+        return [
+          ...tasks,
+          {
+            id: tasks.length + 1,
+            description: e.target.value,
+            status: status,
+            dragId: toString(tasks.length + 1),
+          },
+        ];
+      });
+    } else if (status === "done") {
+      setDone((tasks) => {
+        return [
+          ...tasks,
+          {
+            id: tasks.length + 1,
+            description: e.target.value,
+            status: status,
+            dragId: toString(tasks.length + 1),
+          },
+        ];
+      });
+    }
+    console.log(tasks);
+  };
+
+  // const onDragEnd = (result, tasks) => {
+
+  // }
+
   return (
     <div className="tasks">
-      <div className="stages Resources">
-        <h3>RESOURCES</h3>
-        <div className="tasks-list">
-          <TaskCard />
-          <TaskCard />
+      <DragDropContext onDragEnd={(result) => console.log("nafees", result)}>
+        <div className="stages Resources">
+          <h3>RESOURCES</h3>
+          <Droppable droppableId="droppable-1" type="PERSON">
+            {(provided, snapshot) => (
+              <>
+                <div
+                  className="tasks-list"
+                  ref={provided.innerRef}
+                  style={{
+                    backgroundColor: snapshot.isDraggingOver ? "blue" : "pink",
+                  }}
+                  {...provided.droppableProps}
+                >
+                  {resources.map((task, index) => {
+                    return (
+                      <Draggable
+                        key={task.id}
+                        draggableId={task.description}
+                        index={index}
+                      >
+                        {(provided, snapshot) => (
+                          <div
+                            className="task card"
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                            onDragStart={() => console.log("dragging")}
+                            onDragEnd={() => console.log("dragging end")}
+                          >
+                            {/* <TaskCard
+                              title={task.title}
+                              description={task.description}
+                            /> */}
+
+                            <h4>{task.description}</h4>
+                          </div>
+                        )}
+                      </Draggable>
+                    );
+                  })}
+                </div>
+                <input
+                  className="input"
+                  type="text"
+                  placeholder="Add a card"
+                  onKeyPress={(e) => {
+                    if (e.key === "Enter") {
+                      AddNewCard(e, "resources");
+                      console.log("key pressed");
+                    }
+                  }}
+                />
+                {provided.placeholder}
+              </>
+            )}
+          </Droppable>
         </div>
-        {/* <div className="card-input"> */}
-        <input className="input" type="text" placeholder="Add a card" />
-        {/* </div> */}
-      </div>
 
-      <div className="stages To-Do">
-        <h3>TO-DO</h3>
-        <div className="tasks-list"></div>
-        <input className="input" type="text" placeholder="Add a card" />
-      </div>
+        <div className="stages To-Do">
+          <h3>TO-DO</h3>
+          <Droppable droppableId="droppable-2" type="PERSON">
+            {(provided, snapshot) => (
+              <>
+                <div
+                  className="tasks-list"
+                  ref={provided.innerRef}
+                  style={{
+                    backgroundColor: snapshot.isDraggingOver ? "blue" : "pink",
+                  }}
+                  {...provided.droppableProps}
+                >
+                  {todo.map((task, index) => (
+                    <Draggable
+                      key={task.id}
+                      draggableId={task.description}
+                      index={index}
+                    >
+                      {(provided, snapshot) => (
+                        <div
+                          className="task"
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                        >
+                          <TaskCard
+                            title={task.title}
+                            description={task.description}
+                          />
+                        </div>
+                      )}
+                    </Draggable>
+                  ))}
+                </div>
+                <input
+                  className="input"
+                  type="text"
+                  placeholder="Add a card"
+                  onKeyPress={(e) => {
+                    if (e.key === "Enter") {
+                      AddNewCard(e, "todo");
+                      console.log("key pressed");
+                    }
+                  }}
+                />
+                {provided.placeholder}
+              </>
+            )}
+          </Droppable>
+        </div>
 
-      <div className="stages In-Progress">
-        <h3>In Progress</h3>
-        <div className="tasks-list"></div>
-        <input className="input" type="text" placeholder="Add a card" />
-      </div>
+        <div className="stages In-Progress">
+          <h3>In Progress</h3>
+          <Droppable droppableId="droppable-3" type="PERSON">
+            {(provided, snapshot) => (
+              <>
+                <div
+                  className="tasks-list"
+                  ref={provided.innerRef}
+                  style={{
+                    backgroundColor: snapshot.isDraggingOver ? "blue" : "pink",
+                  }}
+                  {...provided.droppableProps}
+                >
+                  {inprogress.map((task, index) => (
+                    <Draggable
+                      key={task.id}
+                      draggableId={task.description}
+                      index={index}
+                    >
+                      {(provided, snapshot) => (
+                        <div
+                          className="task"
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                        >
+                          <TaskCard
+                            title={task.title}
+                            description={task.description}
+                          />
+                        </div>
+                      )}
+                    </Draggable>
+                  ))}
+                </div>
+                <input
+                  className="input"
+                  type="text"
+                  placeholder="Add a card"
+                  onKeyPress={(e) => {
+                    if (e.key === "Enter") {
+                      AddNewCard(e, "inprogress");
+                      console.log("key pressed");
+                    }
+                  }}
+                />
+                {provided.placeholder}
+              </>
+            )}
+          </Droppable>
+        </div>
 
-      <div className="stages Done">
-        <h3> Done </h3>
-        <div className="tasks-list"></div>
-        <input className="input" type="text" placeholder="Add a card" />
-      </div>
+        <div className="stages Done">
+          <h3> Done </h3>
+
+          <Droppable droppableId="droppable-4" type="PERSON">
+            {(provided, snapshot) => (
+              <>
+                <div
+                  className="tasks-list"
+                  ref={provided.innerRef}
+                  style={{
+                    backgroundColor: snapshot.isDraggingOver ? "blue" : "pink",
+                  }}
+                  {...provided.droppableProps}
+                >
+                  {done.map((task, index) => (
+                    <Draggable
+                      key={task.id}
+                      draggableId={task.description}
+                      index={index}
+                    >
+                      {(provided, snapshot) => (
+                        <div
+                          className="task"
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                        >
+                          <TaskCard
+                            title={task.title}
+                            description={task.description}
+                          />
+                        </div>
+                      )}
+                    </Draggable>
+                  ))}
+                </div>
+                <input
+                  className="input"
+                  type="text"
+                  placeholder="Add a card"
+                  onKeyPress={(e) => {
+                    if (e.key === "Enter") {
+                      AddNewCard(e, "done");
+                      console.log("key pressed");
+                    }
+                  }}
+                />
+                {provided.placeholder}
+              </>
+            )}
+          </Droppable>
+        </div>
+      </DragDropContext>
     </div>
   );
 };
