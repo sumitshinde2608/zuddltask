@@ -111,7 +111,7 @@ const TasksBoard = () => {
             id: tasks.length + 1,
             description: e.target.value,
             status: status,
-            dragId: toString(tasks.length() + 1),
+            dragId: toString(tasks.length + 1),
           },
         ];
       });
@@ -266,33 +266,27 @@ const TasksBoard = () => {
                   }}
                   {...provided.droppableProps}
                 >
-                  {resources.map((task, index) => {
-                    return (
-                      <Draggable
-                        key={task.id}
-                        draggableId={task.description}
-                        index={index}
-                      >
-                        {(provided, snapshot) => (
-                          <div
-                            className="task card"
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            onDragStart={() => console.log("dragging")}
-                            onDragEnd={() => console.log("dragging end")}
-                          >
-                            {/* <TaskCard
-                              title={task.title}
-                              description={task.description}
-                            /> */}
-
-                            <h4>{task.description}</h4>
-                          </div>
-                        )}
-                      </Draggable>
-                    );
-                  })}
+                  {resources.map((task, index) => (
+                    <Draggable
+                      key={task.id}
+                      draggableId={task.description}
+                      index={index}
+                    >
+                      {(provided, snapshot) => (
+                        <div
+                          className="task"
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                        >
+                          <TaskCard
+                            title={task.title}
+                            description={task.description}
+                          />
+                        </div>
+                      )}
+                    </Draggable>
+                  ))}
                 </div>
                 <input
                   className="input"
